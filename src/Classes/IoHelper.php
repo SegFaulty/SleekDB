@@ -117,13 +117,8 @@ class IoHelper {
    * @throws IOException
    */
   public static function createFolder(string $folderPath, int $chmod){
-    // We don't need to create a folder if it already exists.
-    if(file_exists($folderPath) === true){
-      return;
-    }
-    self::checkWrite($folderPath);
     // Check if the data_directory exists or create one.
-    if (!file_exists($folderPath) && !mkdir($folderPath, $chmod, true) && !is_dir($folderPath)) {
+    if( !is_dir($folderPath) && !mkdir($folderPath, $chmod, true) ) {
       throw new IOException(
         'Unable to create the a directory at ' . $folderPath
       );
