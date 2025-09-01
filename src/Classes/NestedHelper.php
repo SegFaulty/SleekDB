@@ -28,6 +28,15 @@ class NestedHelper
     }
     // Dive deep step by step.
     foreach (explode('.', $fieldName) as $i) {
+		// 2025-08 2s: simple version of * wildcard , concat all string fields in thhis array as value, better would be to check if this * is the last element, otherwise iterate all sub arrays
+		//             weil wir damitfull text search in complexen documents machen koennen
+	    if( $i=='*' ){
+			// concat all values in array
+			if( is_array($data) ){
+				$data = self::arrayToString($data, ' ');
+				break;
+			}
+		}
       // If the field does not exists we return null;
       if (!isset($data[$i])) {
         return null;
@@ -38,7 +47,20 @@ class NestedHelper
     return $data;
   }
 
-  /**
+static private function arrayToString($array, $separator = '') {
+		$result = '';
+		foreach ($array as $value) {
+			if (is_string($value)) {
+				$result .= $value . $separator;
+			} elseif (is_array($value)) {
+				$result .= self::arrayToString($value, $separator);
+			}
+		}
+		return $result;
+	}
+
+
+	/**
    * Check if a nested Property exists
    * @param string $fieldName
    * @param array $data
